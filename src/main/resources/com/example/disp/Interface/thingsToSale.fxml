@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:controller="com.example.disp.Interface.HelloController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="602.0" prefWidth="680.0" style="-fx-background-color: #223d42;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox alignment="CENTER" layoutX="78.0" layoutY="11.0" prefHeight="45.0" prefWidth="242.0" style="-fx-background-color: #223d42;">
+            <children>
+                <Button fx:id="dIsplayProducts" mnemonicParsing="false" onAction="#handleClicks" style="-fx-background-color: #223d42;" text="Products" textFill="#dcdcdc">
+                    <font>
+                        <Font name="Palatino Linotype" size="25.0" />
+                    </font>
+                </Button>
+                <Separator prefWidth="200.0" />
+            </children>
+        </VBox>
+        <TableView fx:id="tableViewProducts" layoutY="73.0" prefHeight="370.0" prefWidth="412.0" style="-fx-background-color: #5ca4b1;">
+            <columns>
+                <TableColumn fx:id="c1p" prefWidth="54.399961829185486" style="-fx-background-color: #3a676f;" text="ID" />
+                <TableColumn fx:id="c2p" prefWidth="106.4000015258789" style="-fx-background-color: #3a676f;" text="name" />
+                <TableColumn fx:id="c3p" prefWidth="113.5999755859375" style="-fx-background-color: #3a676f;" text="Price" />
+                <TableColumn fx:id="c4p" prefWidth="136.0" style="-fx-background-color: #3a676f;" text="stock" />
+            </columns>
+        </TableView>
+        <VBox alignment="TOP_CENTER" layoutX="453.0" layoutY="34.0" prefHeight="56.0" prefWidth="178.0">
+            <children>
+                <Text fill="#c7c1c1" strokeType="OUTSIDE" strokeWidth="0.0" text="Actions: add Products" textAlignment="CENTER" wrappingWidth="154.13678550720215">
+                    <font>
+                        <Font name="Palatino Linotype" size="19.0" />
+                    </font>
+                </Text>
+            </children>
+        </VBox>
+        <Separator layoutX="413.0" layoutY="244.0" orientation="VERTICAL" prefHeight="200.0" />
+        <Separator layoutX="413.0" layoutY="50.0" orientation="VERTICAL" prefHeight="200.0" />
+        <Separator layoutX="413.0" layoutY="-137.0" orientation="VERTICAL" prefHeight="200.0" />
+        <TextField fx:id="prodCntName" layoutX="440.0" layoutY="144.0" onAction="#handleClicks" prefHeight="26.0" prefWidth="204.0" />
+        <Text fill="#e4e2e2" layoutX="513.0" layoutY="130.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Name:">
+            <font>
+                <Font name="Palatino Linotype" size="20.0" />
+            </font>
+        </Text>
+        <Text fill="#fcfcfc" layoutX="506.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" Price:">
+            <font>
+                <Font name="Palatino Linotype" size="23.0" />
+            </font>
+        </Text>
+        <TextField fx:id="prodcntAdress" layoutX="440.0" layoutY="221.0" onAction="#handleClicks" prefHeight="26.0" prefWidth="204.0" />
+        <Text fill="#e1e1e1" layoutX="513.0" layoutY="269.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Stock:" wrappingWidth="58.857421875">
+            <font>
+                <Font name="Palatino Linotype" size="22.0" />
+            </font>
+        </Text>
+        <TextField fx:id="prodcntMail" layoutX="440.0" layoutY="300.0" onAction="#handleClicks" prefHeight="26.0" prefWidth="204.0" />
+        <Button fx:id="addProd" layoutX="475.0" layoutY="375.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="46.0" prefWidth="125.0" style="-fx-background-color: #5ca4b1;" text="Add Product" textFill="#d9d9d9">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Button>
+        <Separator layoutX="213.0" layoutY="442.0" prefWidth="200.0" />
+        <Separator layoutX="22.0" layoutY="442.0" prefWidth="200.0" />
+        <Separator layoutX="-100.0" layoutY="442.0" prefWidth="200.0" />
+        <Text fill="WHITE" layoutX="39.0" layoutY="476.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delete Product">
+            <font>
+                <Font name="Palatino Linotype" size="17.0" />
+            </font>
+        </Text>
+        <TextField fx:id="delidprod" layoutX="26.0" layoutY="481.0" onAction="#handleClicks" promptText="         Insert the id" />
+        <Button fx:id="prodbtnDel" layoutX="39.0" layoutY="518.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="46.0" prefWidth="125.0" style="-fx-background-color: #5ca4b1;" text="Delete" textFill="#d9d9d9">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Button>
+        <Separator layoutX="406.0" layoutY="442.0" prefWidth="200.0" />
+        <Separator layoutX="531.0" layoutY="442.0" prefWidth="200.0" />
+        <Separator layoutX="210.0" layoutY="441.0" orientation="VERTICAL" prefHeight="200.0" />
+        <Text fill="WHITE" layoutX="222.0" layoutY="468.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Edit ">
+            <font>
+                <Font name="Palatino Linotype" size="21.0" />
+            </font>
+        </Text>
+        <TextField fx:id="editIDprod" layoutX="266.0" layoutY="480.0" onAction="#handleClicks" prefHeight="26.0" prefWidth="93.0" />
+        <Text fill="WHITE" layoutX="231.0" layoutY="498.0" strokeType="OUTSIDE" strokeWidth="0.0" text="id:">
+            <font>
+                <Font name="Palatino Linotype" size="18.0" />
+            </font>
+        </Text>
+        <Text fill="#e4e2e2" layoutX="406.0" layoutY="468.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Name:">
+            <font>
+                <Font name="Palatino Linotype" size="20.0" />
+            </font>
+        </Text>
+        <TextField fx:id="prodcntName2" layoutX="470.0" layoutY="450.0" onAction="#handleClicks" prefHeight="26.0" prefWidth="178.0" />
+        <Text fill="#fcfcfc" layoutX="398.0" layoutY="499.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" Price:">
+            <font>
+                <Font name="Palatino Linotype" size="23.0" />
+            </font>
+        </Text>
+        <TextField fx:id="prodPrice" layoutX="470.0" layoutY="480.0" onAction="#handleClicks" prefHeight="26.0" prefWidth="178.0" />
+        <Text fill="#e1e1e1" layoutX="398.0" layoutY="531.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Stock:" wrappingWidth="73.33679771423363">
+            <font>
+                <Font name="Palatino Linotype" size="22.0" />
+            </font>
+        </Text>
+        <TextField fx:id="prodStock" layoutX="470.0" layoutY="514.0" onAction="#handleClicks" prefHeight="26.0" prefWidth="178.0" />
+        <Button fx:id="updateProd" layoutX="250.0" layoutY="527.0" mnemonicParsing="false" onAction="#handleClicks" prefHeight="46.0" prefWidth="125.0" style="-fx-background-color: #5ca4b1;" text="Update" textFill="#d9d9d9">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Button>
+    </children>
+</AnchorPane>
