@@ -5,6 +5,7 @@ module com.example.disp {
     requires org.controlsfx.controls;
     requires java.sql;
     requires com.oracle.database.jdbc;
+    requires java.desktop;
 
     //opens com.example.disp to javafx.fxml;
    // exports com.example.disp;

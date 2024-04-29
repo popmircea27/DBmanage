@@ -3,6 +3,9 @@ package com.example.disp.ConnectionDB;
 import java.sql.SQLException;
 
 import java.sql.* ;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 /**
  * in this class:- i generate the connection with the database.
@@ -10,8 +13,9 @@ import java.sql.* ;
  */
 public class DataBase {
     private static Connection connection = null;
-
+    private static final Logger LOGGER = Logger.getLogger(DataBase.class.getName());
     static{
+
         String url = "jdbc:oracle:thin:@localhost:1521:XE";
         String username = "system";
         String password = "LKLTLPHT2udfu";
@@ -29,6 +33,35 @@ public class DataBase {
 
     public static Connection getConnection() {
         return connection;
+    }
+    public static void close(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                LOGGER.log(Level.WARNING, "An error occured while trying to close the connection");
+            }
+        }
+    }
+
+    public static void close(Statement statement) {
+        if (statement != null) {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                LOGGER.log(Level.WARNING, "An error occured while trying to close the statement");
+            }
+        }
+    }
+
+    public static void close(ResultSet resultSet) {
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                LOGGER.log(Level.WARNING, "An error occured while trying to close the ResultSet");
+            }
+        }
     }
 
     public static int exeUpdate(String query, Object... params) {
@@ -82,4 +115,5 @@ public class DataBase {
             throw new RuntimeException(e);
         }
     }
+
 }

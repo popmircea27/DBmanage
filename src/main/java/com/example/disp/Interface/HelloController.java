@@ -1,8 +1,14 @@
 package com.example.disp.Interface;
 
+import com.example.disp.ConnectionDB.InterogationAddRecipe;
+import com.example.disp.ConnectionDB.InterogationCustomers;
+import com.example.disp.ConnectionDB.InterogationProduct;
+import com.example.disp.bussinesLogic.ClientBLL;
+import com.example.disp.bussinesLogic.ProductBLL;
+import com.example.disp.model.BillRecord;
 import com.example.disp.model.Customer;
 import com.example.disp.model.Product;
-import com.example.disp.ConnectionDB.Interogation;
+//import com.example.disp.ConnectionDB.Interogation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -193,7 +199,8 @@ public class HelloController {
     @FXML
     void handleClicks(ActionEvent event) throws IOException, SQLException {
         ObservableList<Product> listaOBJ = FXCollections.observableArrayList();
-
+        ObservableList<ProductBLL> listaOBJBLL = FXCollections.observableArrayList();
+        ObservableList<ClientBLL> listaCltBLL = FXCollections.observableArrayList();
         if(c1op!=null && c2op!=null && c3op!=null &c4op!=null) {
             c1op.setCellValueFactory(new PropertyValueFactory<>("id"));
             c2op.setCellValueFactory(new PropertyValueFactory<>("nume"));
@@ -238,7 +245,7 @@ public class HelloController {
             c4.setCellValueFactory(new PropertyValueFactory<>("email"));
         }
         if(event.getSource() == btnREF){                //TODO: ref the table
-            ResultSet rez= Interogation.getAllCustomers();
+            ResultSet rez= InterogationCustomers.getAllCustomers();
             while(rez.next()){
                 String id=rez.getString(1);
                 id_max= Integer.parseInt(id);
@@ -257,7 +264,7 @@ public class HelloController {
             String name = cntName.getText();
             String adress = cntAdress.getText();
             String mail = cntMail.getText();
-            Interogation.addCustomer(name,adress,mail);
+            InterogationCustomers.addCustomer(name,adress,mail);
 
         } else if (event.getSource() == btnEdit) {       //TODO: Edit  an obj customers to the table
             String idToEdit = cntName1.getText();
@@ -267,14 +274,14 @@ public class HelloController {
             String adress = adrMod.getText();
             String mail = mailMod.getText();
             System.out.println("TRY TO update:"+id);
-            Interogation.updateCustomer(id,name,adress,mail);
+            InterogationCustomers.updateCustomer(id,name,adress,mail);
 
         } else if (event.getSource() == btnDel) {     //TODO: Delete an obj customers to the table
             String idTodel = idModClient.getText();
             int id = Integer.parseInt(idTodel);
 
             System.out.println("TRY TO DEL id:"+id);
-            Interogation.deleteCustomer(id);
+            InterogationCustomers.deleteCustomer(id);
 
         }
 
@@ -300,7 +307,7 @@ public class HelloController {
 
         if(event.getSource()==dIsplayProducts){
             //System.out.println("aici");
-            ResultSet rez=Interogation.getAllProducts();
+            ResultSet rez=InterogationProduct.getAllProducts();
             while(rez.next()){
                 String id=rez.getString(1);
                 id_max2= Integer.parseInt(id);
@@ -318,7 +325,7 @@ public class HelloController {
             int id = Integer.parseInt(idToDel);
 
             System.out.println("TRY TO DEL id:"+id);
-            Interogation.deleteProduct(id);
+            InterogationProduct.deleteProduct(id);
         }else if(event.getSource()==addProd) {
             String prodName=prodCntName.getText();
             String priceProd=prodcntAdress.getText();
@@ -326,7 +333,7 @@ public class HelloController {
             String stock=prodcntMail.getText();
             int stockInt=Integer.parseInt(stock);
             id_max2++;
-            Interogation.addProduct(id_max2,prodName,priceInt,stockInt);
+            InterogationProduct.addProduct(id_max2,prodName,priceInt,stockInt);
         }else if(event.getSource()==updateProd){
             String id=editIDprod.getText();
             String prodName=prodcntName2.getText();
@@ -335,7 +342,7 @@ public class HelloController {
             String stock=prodStock.getText();
             int stockInt=Integer.parseInt(stock);
 
-            Interogation.updateProduct(Integer.parseInt(id),prodName,priceInt,stockInt);
+            InterogationProduct.updateProduct(Integer.parseInt(id),prodName,priceInt,stockInt);
         }
 
         /**
@@ -346,10 +353,10 @@ public class HelloController {
             String idCumparator=idBuyer.getText();
             //System.out.println(idCumparator);
             String str="Hello, ";
-            str+=Interogation.getCustomerNameById(Integer.parseInt(idCumparator));
+            str+=InterogationCustomers.getCustomerNameById(Integer.parseInt(idCumparator));
             //System.out.println(str);
             numeCumparator.setText(str);
-            ResultSet rez=Interogation.getAllProducts();
+            ResultSet rez=InterogationProduct.getAllProducts();
             while(rez.next()){
                 String id=rez.getString(1);
                 id_max2= Integer.parseInt(id);
@@ -370,7 +377,7 @@ public class HelloController {
             String idProd = btnIDproduct.getText();
             String amountProd = btnAmount.getText();
 
-            ResultSet resultSet = Interogation.getProductById(Integer.parseInt(idProd));
+            ResultSet resultSet = InterogationProduct.getProductById(Integer.parseInt(idProd));
             while (resultSet.next()) {
                 String productId = resultSet.getString("id");
                 String productName = resultSet.getString("nume");
@@ -382,7 +389,7 @@ public class HelloController {
 
                 if (requestedAmount <= currentStock) {
                     int newStock = currentStock - requestedAmount;
-                    Interogation.updateProduct(Integer.parseInt(productId), productName, Double.parseDouble(productPrice), newStock);
+                    InterogationProduct.updateProduct(Integer.parseInt(productId), productName, Double.parseDouble(productPrice), newStock);
 
                     Product newProd = new Product(productId, productName, productPrice, amountProd);
                     listaCos.add(newProd);
@@ -395,7 +402,7 @@ public class HelloController {
             if (tab2 != null) {
                 tab2.setItems(listaCos);
             }
-            ResultSet rez=Interogation.getAllProducts();
+            ResultSet rez=InterogationProduct.getAllProducts();
             while(rez.next()){
                 String id=rez.getString(1);
                 id_max2= Integer.parseInt(id);
@@ -403,7 +410,8 @@ public class HelloController {
                 String price=rez.getString(3);
                 String stock=rez.getString(4);
                 Product newProd= new Product(id,nume,price,stock);
-                //System.out.println(newProd);
+                ProductBLL prodBll= new ProductBLL(Integer.parseInt(id),nume, (float)Double.parseDouble(price),Integer.parseInt(stock));
+                //listaOBJBLL.add(prodBll);
                 listaOBJ.add(newProd);
             }
             //System.out.println(tab1);
@@ -411,12 +419,13 @@ public class HelloController {
                 tab1.setItems(listaOBJ);
             }
         }else if(event.getSource()==genRecipe){
-            String numecmp=Interogation.getCustomerNameById(Integer.parseInt(idBuyer.getText()));
+            String numecmp= InterogationCustomers.getCustomerNameById(Integer.parseInt(idBuyer.getText()));
             double suma=0.f;
             for(Product prdIter:listaCos){
                 suma+=Double.parseDouble(prdIter.getPrice())*Integer.parseInt(prdIter.getStock());
             }
-            Interogation.addBill(id_max2,numecmp,suma);
+            BillRecord bill = new BillRecord(id_max2, numecmp,"-",suma);
+            InterogationAddRecipe.addBill(id_max2,numecmp,suma);
         }
 
 
