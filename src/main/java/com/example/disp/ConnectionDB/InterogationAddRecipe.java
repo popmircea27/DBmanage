@@ -9,13 +9,13 @@ public class InterogationAddRecipe {
     public static void addBill(int id,String buyerName, double price) {
         try {
             DataBase.getConnection().setAutoCommit(false);
-            database.exeUpdate(insertBillQuery,id, buyerName, price);
+            DataBase.exeUpdate(insertBillQuery,id, buyerName, price);
             DataBase.getConnection().commit();
             System.out.println("Bill successfully added for buyer: " + buyerName);
         } catch (SQLException e) {
             System.out.println("Error adding bill: " + e.getMessage());
             try {
-                database.getConnection().rollback();
+                DataBase.getConnection().rollback();
             } catch (SQLException ex) {
                 System.out.println("Error rolling back transaction: " + ex.getMessage());
             }
