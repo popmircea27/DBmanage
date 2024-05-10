@@ -11,71 +11,57 @@ import java.util.logging.Logger;
 
 import com.example.disp.ConnectionDB.DataBase;
 
-
-
 public class AbstractDAO<T> {
     protected static final Logger LOGGER = Logger.getLogger(AbstractDAO.class.getName());
 
     private final Class<T> type;
 
-    @SuppressWarnings("unchecked")
+
     public AbstractDAO() {
         this.type = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-
     }
 
     private String createSelectQuery(String field) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT ");
-        sb.append(" * ");
-        sb.append(" FROM ");
-        sb.append(type.getSimpleName());
-        sb.append(" WHERE " + field + " =?");
-        return sb.toString();
+        return "SELECT * FROM " + type.getSimpleName() + " WHERE " + field + " = ?";
     }
 
     public List<T> findAll() {
-        // TODO:
-        return null;
+        List<T> resultList = new ArrayList<>();
+        String query = "SELECT * FROM " + type.getSimpleName();
+
+        try (Connection connection = DataBase.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            resultList = createObjects(resultSet);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error while retrieving all objects", e);
+        }
+        return resultList;
     }
 
+
     public T findById(int id) {
-        Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
         String query = createSelectQuery("id");
-
-        try {
-            connection = DataBase.getConnection();
-            statement = connection.prepareStatement(query);
+        try (Connection connection = DataBase.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
-            resultSet = statement.executeQuery();
-
-            return createObjects(resultSet).get(0);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<T> objects = createObjects(resultSet);
+                return objects.isEmpty() ? null : objects.get(0);
+            }
         } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, type.getName() + "DAO:findById " + e.getMessage());
-        } finally {
-
-            //DataBase.close(resultSet);
-            //DataBase.close(statement);
-            //DataBase.close(connection);
+            LOGGER.log(Level.WARNING, type.getName() + "DAO:findById " + e.getMessage(), e);
         }
         return null;
     }
 
     private List<T> createObjects(ResultSet resultSet) {
-        List<T> list = new ArrayList<T>();
-        Constructor[] ctors = type.getDeclaredConstructors();
-        Constructor ctor = null;
-        for (int i = 0; i < ctors.length; i++) {
-            ctor = ctors[i];
-            if (ctor.getGenericParameterTypes().length == 0)
-                break;
-        }
+        List<T> list = new ArrayList<>();
         try {
+            Constructor<T> ctor = type.getDeclaredConstructor();
             while (resultSet.next()) {
-                ctor.setAccessible(true);
-                T instance = (T)ctor.newInstance();
+                T instance = ctor.newInstance();
                 for (Field field : type.getDeclaredFields()) {
                     String fieldName = field.getName();
                     Object value = resultSet.getObject(fieldName);
@@ -85,50 +71,82 @@ public class AbstractDAO<T> {
                 }
                 list.add(instance);
             }
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IntrospectionException e) {
-            e.printStackTrace();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                 InvocationTargetException | SQLException | IntrospectionException e) {
+            LOGGER.log(Level.SEVERE, "Error while creating objects", e);
         }
         return list;
     }
-//"INSERT INTO Customers_ORDERS_MANAGEMENT (name, address, email) VALUES (?, ?, ?)";
+
     public T insert(T t) throws IntrospectionException {
-        Constructor[] ctors = type.getDeclaredConstructors();
-        Constructor ctor = null;
-        for (int i = 0; i < ctors.length; i++) {
-            ctor = ctors[i];
-            if (ctor.getGenericParameterTypes().length == 0)
-                break;
-        }
         StringBuilder sb = new StringBuilder();
-        sb.append("INSERT INTO");
-        sb.append(type.getSimpleName());
-        for(Field field : type.getDeclaredFields()){
-           String name=field.getName();
-           PropertyDescriptor propertyDescriptor = new PropertyDescriptor(name, type);
-            Method method = propertyDescriptor.getReadMethod();
-            //String value = method.invoke(instance);
+        sb.append("INSERT INTO ");
+        sb.append(type.getSimpleName()).append(" (");
+
+        Field[] fields = type.getDeclaredFields();
+        for (Field field : fields) {
+            sb.append(field.getName()).append(", ");
         }
+        sb.deleteCharAt(sb.length() - 1);
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(") VALUES (");
+        for (Field field : fields) {
+            sb.append("?, ");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(")");
 
+        String sql = sb.toString();
 
-        //return sb.toString();
+        try (Connection connection = DataBase.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            int index = 1;
+            for (Field field : fields) {
+                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), type);
+                Method method = propertyDescriptor.getReadMethod();
+                Object value = method.invoke(t);
+                statement.setObject(index++, value);
+            }
+            statement.executeUpdate();
+        } catch (SQLException | IllegalAccessException | InvocationTargetException e) {
+            LOGGER.log(Level.SEVERE, "Error while inserting object", e);
+        }
         return t;
     }
 
     public T update(T t) {
-        // TODO:
+        StringBuilder sb = new StringBuilder();
+        sb.append("UPDATE ").append(type.getSimpleName()).append(" SET ");
+
+        Field[] fields = type.getDeclaredFields();
+        for (Field field : fields) {
+            sb.append(field.getName()).append(" = ?, ");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(" WHERE id = ?");
+
+        String sql = sb.toString();
+
+        try (Connection connection = DataBase.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            int index = 1;
+            for (Field field : fields) {
+                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), type);
+                Method method = propertyDescriptor.getReadMethod();
+                Object value = method.invoke(t);
+                statement.setObject(index++, value);
+            }
+            // Set the id parameter
+            PropertyDescriptor idPropertyDescriptor = new PropertyDescriptor("id", type);
+            Method idMethod = idPropertyDescriptor.getReadMethod();
+            statement.setObject(index, idMethod.invoke(t));
+
+            statement.executeUpdate();
+        } catch (SQLException | IllegalAccessException | InvocationTargetException | IntrospectionException e) {
+            LOGGER.log(Level.SEVERE, "Error while updating object", e);
+        }
         return t;
     }
 }
-

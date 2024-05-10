@@ -1,55 +1,11 @@
-package com.example.disp.bussinesLogic;
+package com.example.disp.Dao;
 
 import com.example.disp.ConnectionDB.DataBase;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ProductBLL {
-    private int id;
-    private String nume;
-    private float price;
-    private int stock;
-
-    public ProductBLL(int id, String nume, float price, int stock) {
-        this.id = id;
-        this.nume = nume;
-        this.price = price;
-        this.stock = stock;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getNume() {
-        return nume;
-    }
-
-    public float getPrice() {
-        return price;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setNume(String nume) {
-        this.nume = nume;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
+public class ProductDAO {
     private static final String allProducts = "SELECT * FROM AssignmentTP_Products";
     private static final String addProductQuery = "INSERT INTO AssignmentTP_Products (id, nume, pret, cantitate) VALUES (?, ?, ?, ?)";
     private static final String updateProduct = "UPDATE AssignmentTP_Products SET nume = ?, pret = ?, cantitate = ? WHERE id = ?";
@@ -76,7 +32,7 @@ public class ProductBLL {
         }
     }
 
-    // Method to delete a product
+
     public static void deleteProduct(int id) {
         try {
             DataBase.getConnection().setAutoCommit(false);
@@ -92,7 +48,7 @@ public class ProductBLL {
         }
     }
 
-    // Method to add a new product
+
     public static void addProduct(int id,String name, double price, int stock) {
         try {
             DataBase.getConnection().setAutoCommit(false);
