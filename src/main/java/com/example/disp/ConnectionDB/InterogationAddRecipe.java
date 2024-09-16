@@ -2,6 +2,8 @@ package com.example.disp.ConnectionDB;
 
 import java.sql.SQLException;
 
+import static java.lang.Math.random;
+
 public class InterogationAddRecipe {
 
     static String insertBillQuery = "INSERT INTO BILL_TP_ASSIGNMENT (BILL_ID, buyer_name, amount_to_pay) VALUES (?, ?, ?)";
@@ -9,7 +11,7 @@ public class InterogationAddRecipe {
     public static void addBill(int id,String buyerName, double price) {
         try {
             DataBase.getConnection().setAutoCommit(false);
-            DataBase.exeUpdate(insertBillQuery,id, buyerName, price);
+            DataBase.exeUpdate(insertBillQuery,id+random()*1000, buyerName, price);
             DataBase.getConnection().commit();
             System.out.println("Bill successfully added for buyer: " + buyerName);
         } catch (SQLException e) {
